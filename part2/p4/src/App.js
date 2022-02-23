@@ -1,8 +1,9 @@
 import { useState,useEffect } from 'react'
 import axios from 'axios'
 import personService from './services/persons'
-import ReactDOM from 'react-dom';
-
+import ReactDOM from 'react-dom'
+import Notification from './components/Notification'
+import './index.css'
 const Persons = ({peopleToShow, setPersons,persons}) => {
  
   const deletePerson = (name) => {
@@ -70,7 +71,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
- 
+  const [confirmationMessage, setConfirmationMessage] = useState(null)
+
   useEffect(() => {
     console.log('effect')
     personService
@@ -100,8 +102,15 @@ const App = () => {
           console.log(response)
           console.log(response.data)
           setPersons(persons.concat(response.data))
+          setConfirmationMessage(`Added ${response.data.name}`)
+          setTimeout( () => {
+            console.log('in setTimeout')
+            setConfirmationMessage(null)
+          }, 3000)
         })
+    
     }
+    
     else {
       const getName = persons.filter(person => person.name === newName)
       console.log(getName[0].name,getName[0].number)
@@ -113,13 +122,23 @@ const App = () => {
           }
           personService
             .update(getName[0].id,personObject)
+            .catch(error => {
+              alert(`the person has already been deleted from the server`)
+              setConfirmationMessage(`Information of ${getName[0].name} has already been removed from the server`)
+              setTimeout( () => {
+                console.log('in setTimeout')
+                setConfirmationMessage(null)
+              }, 5000)
+            })
           personService
             .getAll()
             .then(response => {
               console.log('setPerson after update same name diff num')
               setPersons(response.data)
-
+            
+           
           })
+          
         }
       }
     }
@@ -154,7 +173,7 @@ const App = () => {
       peopleToShow = {peopleToShow} persons = {persons} setNewFilter={setNewFilter}/>
       <PersonForm persons = {persons} newName = {newName} handleNameChange = {handleNameChange}
       handleNumberChange = {handleNumberChange} addPerson = {addPerson} newNumber = {newNumber}   />
-      
+      <Notification message = {confirmationMessage}/>
       <h2>Numbers</h2>
       
       newFilter: {newFilter}
