@@ -4,7 +4,7 @@ import personService from './services/persons'
 import ReactDOM from 'react-dom'
 import Notification from './components/Notification'
 import './index.css'
-const Persons = ({peopleToShow, setPersons,persons}) => {
+const Persons = ({peopleToShow, setPersons,persons,setConfirmationMessage}) => {
  
   const deletePerson = (name) => {
     console.log(name)
@@ -19,7 +19,12 @@ const Persons = ({peopleToShow, setPersons,persons}) => {
       .then(response => {
         console.log('setPerson after delete')
         setPersons(response.data)
-    })
+      })
+      .catch(error => {
+        // this is the way to access the error message
+        console.log(error.response.data)
+        setConfirmationMessage(error.response.data)
+      })
   }
 
   return (
@@ -81,6 +86,11 @@ const App = () => {
         console.log('promise fulfilled')
         setPersons(response.data)
       })
+      .catch(error => {
+        // this is the way to access the error message
+        console.log(error.response.data)
+        setConfirmationMessage(error.response.data)
+      })
   }, [])
 
  
@@ -107,6 +117,11 @@ const App = () => {
             console.log('in setTimeout')
             setConfirmationMessage(null)
           }, 3000)
+        })
+        .catch(error => {
+          // this is the way to access the error message
+          console.log(error.response.data)
+          setConfirmationMessage(error.response.data)
         })
     
     }
@@ -135,9 +150,12 @@ const App = () => {
             .then(response => {
               console.log('setPerson after update same name diff num')
               setPersons(response.data)
-            
-           
-          })
+            })
+            .catch(error => {
+              // this is the way to access the error message
+              console.log(error.response.data)
+              setConfirmationMessage(error.response.data)
+            })
           
         }
       }
@@ -147,17 +165,16 @@ const App = () => {
   
 
   const handleNameChange = (event) => {
-    console.log(event.target.value)
+    //console.log(event.target.value)
     setNewName(event.target.value)
   }
   const handleNumberChange = (event) => {
-    console.log(event.target.value)
+    //console.log(event.target.value)
     setNewNumber(event.target.value)
   }
 
-
   const handleFilterChange = (event) => {
-    console.log(event.target.value)
+    //console.log(event.target.value)
     setNewFilter(event.target.value)
   }
   
@@ -176,9 +193,9 @@ const App = () => {
       <Notification message = {confirmationMessage}/>
       <h2>Numbers</h2>
       
-      newFilter: {newFilter}
+      newFilter11: {newFilter}
       
-      <Persons peopleToShow = {peopleToShow} setPersons = {setPersons} persons = {persons}/>
+      <Persons peopleToShow = {peopleToShow} setPersons = {setPersons} persons = {persons} setConfirmationMessage = {setConfirmationMessage}/>
     </div>
     
   )
